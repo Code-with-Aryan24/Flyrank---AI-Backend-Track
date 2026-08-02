@@ -1,47 +1,67 @@
-# 📌 Task API – FastAPI CRUD Application
+# 📌 Task API with SQLite – FlyRank Backend Internship (Week 3)
 
-A simple RESTful CRUD API built using **FastAPI** as part of the **FlyRank Backend Internship – Week 2 (Assignment A1)**.
+A RESTful CRUD API built using **FastAPI** and **SQLite** as part of the **FlyRank AI Backend Internship – Week 3 Assignment**.
 
-This project demonstrates the implementation of a Task Management API using in-memory storage. The API supports creating, reading, updating, and deleting tasks while following REST principles.
+This project upgrades the Week 2 Task API by replacing the in-memory Python list with a SQLite database, enabling persistent storage while keeping the API endpoints unchanged.
 
 ---
 
-## 🚀 Features
+# 🚀 Features
 
-- Create new tasks
+- Create a new task
 - View all tasks
 - View a task by ID
 - Update an existing task
 - Delete a task
+- Persistent storage using SQLite
 - Input validation using Pydantic
+- Interactive Swagger UI
 - Proper HTTP status codes
-- Interactive Swagger Documentation
+- Parameterized SQL queries
 
 ---
 
-## 🛠 Tech Stack
+# 🛠️ Tech Stack
 
 - Python 3.12
 - FastAPI
+- SQLite
+- sqlite3
 - Uvicorn
 - Pydantic
 
 ---
 
-## 📁 Project Structure
+# 📂 Project Structure
 
 ```
-task-api/
+database-api/
 │
 ├── main.py
+├── tasks.db
 ├── requirements.txt
 ├── README.md
-└── .gitignore
+├── .gitignore
+└── venv/
 ```
 
 ---
 
-## ⚙ Installation
+# 💾 Why SQLite?
+
+SQLite is a lightweight relational database that stores all data inside a single `.db` file.
+
+For this assignment it is used because:
+
+- No installation required
+- Built into Python
+- Easy to learn SQL
+- Persistent storage
+- Perfect for small backend applications
+
+---
+
+# ⚙️ Installation
 
 Clone the repository
 
@@ -49,21 +69,21 @@ Clone the repository
 git clone https://github.com/Code-with-Aryan24/Flyrank---AI-Backend-Track.git
 ```
 
-Move inside the project
+Navigate to the project
 
 ```bash
-cd Flyrank---AI-Backend-Track/task-api
+cd Flyrank---AI-Backend-Track/Week-3/database-api
 ```
 
-Create Virtual Environment
-
-### Windows
+Create a virtual environment
 
 ```bash
 python -m venv venv
 ```
 
 Activate it
+
+### Windows
 
 ```bash
 venv\Scripts\activate
@@ -77,13 +97,13 @@ pip install -r requirements.txt
 
 ---
 
-## ▶ Run the Project
+# ▶️ Run the Application
 
 ```bash
 python -m uvicorn main:app --reload
 ```
 
-The API will run at
+The API runs at:
 
 ```
 http://127.0.0.1:8000
@@ -91,17 +111,19 @@ http://127.0.0.1:8000
 
 ---
 
-## 📖 Swagger Documentation
+# 📖 Swagger Documentation
 
-Interactive API documentation is available at
+Open:
 
 ```
 http://127.0.0.1:8000/docs
 ```
 
+Use **Try it out** to test all CRUD operations.
+
 ---
 
-## 📌 API Endpoints
+# 📌 API Endpoints
 
 | Method | Endpoint | Description |
 |----------|----------|-------------|
@@ -109,21 +131,17 @@ http://127.0.0.1:8000/docs
 | GET | /health | Health Check |
 | GET | /tasks | Get All Tasks |
 | GET | /tasks/{id} | Get Task By ID |
-| POST | /tasks | Create Task |
+| POST | /tasks | Create New Task |
 | PUT | /tasks/{id} | Update Task |
 | DELETE | /tasks/{id} | Delete Task |
 
 ---
 
-## 📤 Sample Request
-
-### Create Task
-
-POST `/tasks`
+# 📤 Sample POST Request
 
 ```json
 {
-    "title": "Learn FastAPI"
+    "title": "Learn SQLite"
 }
 ```
 
@@ -132,54 +150,121 @@ POST `/tasks`
 ```json
 {
     "id": 4,
-    "title": "Learn FastAPI",
+    "title": "Learn SQLite",
     "done": false
 }
 ```
 
 ---
 
-## 📥 Sample Update
-
-PUT `/tasks/4`
+# 📥 Sample PUT Request
 
 ```json
 {
-    "title": "Learn FastAPI Completely",
+    "title": "Learn SQLite Completely",
     "done": true
 }
 ```
 
 ---
 
-## 📊 HTTP Status Codes
+# 🗃️ Example SQL Query
+
+```sql
+SELECT * FROM tasks;
+```
+
+Other useful queries:
+
+```sql
+SELECT * FROM tasks WHERE done = 1;
+```
+
+```sql
+SELECT COUNT(*) FROM tasks;
+```
+
+---
+
+# 📸 Database Screenshot
+
+Create a folder named `screenshots`.
+
+```
+database-api/
+│
+└── screenshots/
+    └── database.png
+```
+
+Open **DB Browser for SQLite**, take a screenshot of the `tasks` table, and add it below.
+
+```markdown
+## Database
+
+![Database](screenshots/database.png)
+```
+
+---
+
+# 📸 Swagger Screenshot
+
+Take a screenshot of the Swagger UI and save it as:
+
+```
+screenshots/swagger.png
+```
+
+Add:
+
+```markdown
+## Swagger UI
+
+![Swagger](screenshots/swagger.png)
+```
+
+---
+
+# 📦 Automatic Database Creation
+
+The application automatically:
+
+- Creates `tasks.db`
+- Creates the `tasks` table if it does not exist
+- Inserts three sample tasks on the first run only
+
+No manual database setup is required.
+
+---
+
+# ✅ HTTP Status Codes
 
 | Code | Meaning |
 |------|---------|
-|200|Success|
-|201|Resource Created|
-|204|Deleted Successfully|
-|400|Invalid Request|
-|404|Task Not Found|
+|200|OK|
+|201|Created|
+|204|No Content|
+|400|Bad Request|
+|404|Not Found|
 
 ---
 
-## 🎯 Assignment Objective
+# 🎯 Learning Outcomes
 
-This project was developed as part of the **FlyRank Backend Internship Week 2 Assignment**, focusing on:
+Through this assignment I learned:
 
-- REST API Development
-- CRUD Operations
-- FastAPI Fundamentals
-- HTTP Methods
-- Request Validation
-- Swagger Documentation
+- FastAPI CRUD APIs
+- SQLite integration
+- SQL (SELECT, INSERT, UPDATE, DELETE)
+- Parameterized SQL queries
+- Database persistence
+- REST API design
+- Swagger documentation
 
 ---
 
-## 👨‍💻 Author
+# 👨‍💻 Author
 
 **Aryan Pandey**
 
-GitHub:
-https://github.com/Code-with-Aryan24
+GitHub: https://github.com/Code-with-Aryan24
