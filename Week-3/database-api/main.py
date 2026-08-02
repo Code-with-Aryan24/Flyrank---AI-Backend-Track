@@ -53,23 +53,6 @@ if count == 0:
 # In-memory database
 # (Keep this until Stage 1)
 # -----------------------------
-tasks = [
-    {
-        "id": 1,
-        "title": "Learn FastAPI",
-        "done": False
-    },
-    {
-        "id": 2,
-        "title": "Complete FlyRank Assignment",
-        "done": False
-    },
-    {
-        "id": 3,
-        "title": "Push code to GitHub",
-        "done": False
-    }
-]
 
 # -----------------------------
 # Request Models
@@ -196,36 +179,57 @@ def update_task(task_id: int, updated_task: TaskUpdate):
             detail="Title cannot be empty"
         )
 
-    for task in tasks:
-
-        if task["id"] == task_id:
-
-            task["title"] = updated_task.title
-            task["done"] = updated_task.done
-
-            return task
-
-    raise HTTPException(
-        status_code=404,
-        detail=f"Task {task_id} not found"
+    cursor.execute(
+        "SELECT * FROM tasks WHERE id = ?",
+        (task_id,)
     )
+
+    if cursor.fetchone() is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Task {task_id} not found"
+        )
+
+    cursor.execute(
+        """
+        UPDATE tasks
+        SET title = ?, done = ?
+        WHERE id = ?
+        """,
+        (updated_task.title, updated_task.done, task_id)
+    )
+
+    connection.commit()
+
+    return {
+        "id": task_id,
+        "title": updated_task.title,
+        "done": updated_task.done
+    }
 
 
 # -----------------------------
 # Delete Task
 # -----------------------------
-@app.delete("/tasks/{task_id}", status_code=204, summary="Delete a task")
+@app.delete("/tasks/{task_id}", status_code=204)
 def delete_task(task_id: int):
 
-    for task in tasks:
-
-        if task["id"] == task_id:
-
-            tasks.remove(task)
-
-            return Response(status_code=204)
-
-    raise HTTPException(
-        status_code=404,
-        detail=f"Task {task_id} not found"
+    cursor.execute(
+        "SELECT * FROM tasks WHERE id = ?",
+        (task_id,)
     )
+
+    if cursor.fetchone() is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Task {task_id} not found"
+        )
+
+    cursor.execute(
+        "DELETE FROM tasks WHERE id = ?",
+        (task_id,)
+    )
+
+    connection.commit()
+
+    return Response(status_code=204)
