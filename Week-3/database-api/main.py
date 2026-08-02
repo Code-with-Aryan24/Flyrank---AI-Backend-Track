@@ -112,7 +112,21 @@ def health():
 # -----------------------------
 @app.get("/tasks", summary="Get all tasks")
 def get_tasks():
-    return tasks
+
+    cursor.execute("SELECT * FROM tasks")
+
+    rows = cursor.fetchall()
+
+    task_list = []
+
+    for row in rows:
+        task_list.append({
+            "id": row[0],
+            "title": row[1],
+            "done": bool(row[2])
+        })
+
+    return task_list
 
 
 # -----------------------------
@@ -121,9 +135,20 @@ def get_tasks():
 @app.get("/tasks/{task_id}", summary="Get task by ID")
 def get_task(task_id: int):
 
-    for task in tasks:
-        if task["id"] == task_id:
-            return task
+    cursor.execute(
+        "SELECT * FROM tasks WHERE id = ?",
+        (task_id,)
+    )
+
+    row = cursor.fetchone()
+
+    if row:
+
+        return {
+            "id": row[0],
+            "title": row[1],
+            "done": bool(row[2])
+        }
 
     raise HTTPException(
         status_code=404,
