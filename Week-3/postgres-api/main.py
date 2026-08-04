@@ -1,4 +1,5 @@
 import sqlite3
+from db import connection, cursor
 from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException, Response
 from pydantic import BaseModel
@@ -96,20 +97,18 @@ def health():
 @app.get("/tasks", summary="Get all tasks")
 def get_tasks():
 
-    cursor.execute("SELECT * FROM tasks")
+    cursor.execute("SELECT id, title, done FROM tasks ORDER BY id")
 
     rows = cursor.fetchall()
 
-    task_list = []
-
-    for row in rows:
-        task_list.append({
+    return [
+        {
             "id": row[0],
             "title": row[1],
-            "done": bool(row[2])
-        })
-
-    return task_list
+            "done": row[2]
+        }
+        for row in rows
+    ]
 
 
 # -----------------------------
@@ -119,24 +118,23 @@ def get_tasks():
 def get_task(task_id: int):
 
     cursor.execute(
-        "SELECT * FROM tasks WHERE id = ?",
+        "SELECT id, title, done FROM tasks WHERE id = %s",
         (task_id,)
     )
 
     row = cursor.fetchone()
 
-    if row:
+    if row is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Task {task_id} not found"
+        )
 
-        return {
-            "id": row[0],
-            "title": row[1],
-            "done": bool(row[2])
-        }
-
-    raise HTTPException(
-        status_code=404,
-        detail=f"Task {task_id} not found"
-    )
+    return {
+        "id": row[0],
+        "title": row[1],
+        "done": row[2]
+    }
 
 
 # -----------------------------
